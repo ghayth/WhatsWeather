@@ -3,6 +3,20 @@
 #define TOMTOM_H
 #define ASCII_Code_0 48
 #define townName_Size 20
+
+#define Exit_secure_malloc -11
+#define Exit_get_value -21
+#define Exit_get_size -31
+#define Exit_print_temp -41
+#define Exit_print_humidity -51
+#define Exit_secure_strcpy -61
+
+#define choice_first 1
+#define choice_2 2
+#define choice_3 3
+#define choice_4 4
+#define choice_last 5
+
 #define MAX_Malloc_Tries 1000
 #define default_townName "ABC" 
 #define default_queryValue "http://api.openweathermap.org/data/2.5/weather?q=ABC&mode=xml"
@@ -28,6 +42,7 @@ void print_humidity(char *data);
 void printAbout();
 void free_dynamicVar(void *var);
 void* secure_malloc(int size);
+void* secure_strcpy(char* firstStr,char* secondStr);
 char *replace_str(const char *original_str, const char *old_str, const char *new_str);
 struct MemoryStruct {
   char *memory;

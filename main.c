@@ -18,9 +18,9 @@ int main(void)
   char *oldTownName=(char *)secure_malloc(strlen(default_townName)+1);
   struct MemoryStruct chunk;
   
-  strcpy(query_string,default_queryValue);
   
-  strcpy(oldTownName,default_townName);
+  secure_strcpy(query_string,default_queryValue);
+  secure_strcpy(oldTownName,default_townName);
   ////////////////////////////////begin big while
           while(1)
         {
@@ -29,19 +29,19 @@ int main(void)
 			switch(choice)
             {
 
-            case 1:
+            case choice_first:
                 system("cls");
                 print_temp(chunk.memory);
 				printf("\nPress anything to go back..");
                 getch();
                 break;
-            case 2:
+            case choice_2:
                 system("cls");
                 print_humidity(chunk.memory);
                 printf("\nPress anything to back..");
                 getch();
                 break;
-            case 3:
+            case choice_3:
                  name_validity_pointer= NULL;
 				 while(name_validity_pointer==NULL){
 								
@@ -55,7 +55,8 @@ int main(void)
 							  printf("please enter townName:");
 							  scanf_s("%s",&townName,townName_Size);
 							  query_string=replace_str(query_string,oldTownName,townName);
-							  strncpy_s(oldTownName,townName_Size,townName,sizeof(townName));
+							  //strncpy_s(oldTownName,townName_Size,townName,sizeof(townName));
+							  secure_strcpy(oldTownName,townName);
 							  curl_easy_setopt(curl_handle, CURLOPT_URL, query_string);
 							  /* send all data to this function  */ 
 							  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
@@ -68,7 +69,7 @@ int main(void)
 							  res = curl_easy_perform(curl_handle);
 							  /* check for errors */ 
 							  if(res != CURLE_OK) {
-								fprintf(stderr, "curl_easy_perform() failed: %s\n",	curl_easy_strerror(res));
+								fprintf(stderr, "Connection to the server failed: %s\n",	curl_easy_strerror(res));
 							  }
 							  else {
 								/*
@@ -97,19 +98,19 @@ int main(void)
 				 printf("The town name %s is accepted",townName);
 				 Sleep(1000);
 					break;
-            case 4:
+            case choice_4:
                 system("cls");
                 printAbout();
 				printf("\nPress anything to back..");
                 getch();
                 break;
-            case 5:
+            case choice_last:
                 printf("Please enter any key to exit the Weather Application..");
 				getch();
                 break;
 
             }
-			if(choice==5) break;
+			if(choice==choice_last) break;
 			system("cls");
             printf("Welcome to Embedded Weather Station !\n");
             printf("************The Menu ***************\n");
@@ -121,7 +122,7 @@ int main(void)
             printf("\nPlease enter a valid choice: (between 1 and 5):");
 			choice=0;
 			choice=(int)getchar()-ASCII_Code_0;
-            while((choice<1)||(choice>5))
+            while((choice<choice_first)||(choice>choice_last))
             {
 				choice=(int)getchar()-ASCII_Code_0;
 				
@@ -145,7 +146,7 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
   size_t realsize = size * nmemb;
   struct MemoryStruct *mem = (struct MemoryStruct *)userp;
  
-  mem->memory = realloc(mem->memory, mem->size + realsize + 1);
+  mem->memory =(char *) realloc(mem->memory, mem->size + realsize + 1);
   if(mem->memory == NULL) {
     /* out of memory! */ 
     printf("not enough memory (realloc returned NULL)\n");
