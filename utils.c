@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h> 
+#include <stdio.h>
+#include <conio.h>
 #include "tomtom.h"
 
 void printAbout(){
@@ -27,7 +28,7 @@ char *replace_str(const char *original_str, const char *old_str, const char *new
 	} else
 		result_len = strlen(original_str);
 
-	if ((result_str = (char *) malloc(result_len + 1)) == NULL)
+	if ((result_str = (char *) secure_malloc(result_len + 1)) == NULL)
 		return NULL;
 	r = result_str;
 	for (p = original_str; (q = strstr(p, old_str)) != NULL; p = q + old_strlen) {
@@ -46,7 +47,7 @@ char *replace_str(const char *original_str, const char *old_str, const char *new
 
 char *get_value(char *target_value,char *parse_value,int value_size)
 {
-   	char *value=(char *)malloc(value_size+1);
+   	char *value=(char *)secure_malloc(value_size+1);
 	memcpy(value,parse_value,value_size);
 	value[value_size]='\0';
 	memcpy(target_value,value,value_size);
@@ -76,7 +77,7 @@ int get_size(char *source_temporary_data,char *target_value_name,char *balise,ch
 
 
 void print_temp(char *data){
-    char *temporary_data=(char *)malloc(sizeof(data)+1);
+    char *temporary_data=(char *)secure_malloc(strlen(data)+1);
 	int temp_value_size,min_temp_size,max_temp_size,unit_temp_size;
 	char *temp_value;
 	char *min_temp_value;
@@ -84,19 +85,19 @@ void print_temp(char *data){
 	char *unit_temp_value;
 
 	temp_value_size=get_size(data,"value=\"","temperature",temporary_data);
-	temp_value = (char *)malloc(temp_value_size+1);
+	temp_value = (char *)secure_malloc(temp_value_size+1);
 	get_value(temp_value,temporary_data,temp_value_size);
 	
 	min_temp_size=get_size(data,"min=\"","temperature",temporary_data);
-	min_temp_value = (char *)malloc(min_temp_size+1);
+	min_temp_value = (char *)secure_malloc(min_temp_size+1);
 	get_value(min_temp_value,temporary_data,min_temp_size);
 
 	max_temp_size=get_size(data,"max=\"","temperature",temporary_data);
-	max_temp_value = (char *)malloc(min_temp_size+1);
+	max_temp_value = (char *)secure_malloc(min_temp_size+1);
 	get_value(max_temp_value,temporary_data,max_temp_size);
 
 	unit_temp_size=get_size(data,"unit=\"","temperature",temporary_data);
-	unit_temp_value = (char *)malloc(min_temp_size+1);
+	unit_temp_value = (char *)secure_malloc(min_temp_size+1);
 	get_value(unit_temp_value,temporary_data,unit_temp_size);    
     
     printf("la temperature:  %s ,minimale %s ,maximale %s %s",temp_value,min_temp_value,max_temp_value,unit_temp_value);
@@ -109,17 +110,17 @@ void print_temp(char *data){
 ////////////end temp get value
 
 void print_humidity(char *data){
-	char *temporary_data=(char *)malloc(sizeof(data)+1);
+	char *temporary_data=(char *)secure_malloc(strlen(data)+1);
 	int humidity_value_size,unit_humidity_size;
     char *humidity_value;
 	char *unit_humidity_value;
 
 	humidity_value_size=get_size(data,"value=\"","humidity",temporary_data);
-    humidity_value = (char *)malloc(humidity_value_size+1);
+    humidity_value = (char *)secure_malloc(humidity_value_size+1);
 	get_value(humidity_value,temporary_data,humidity_value_size);
 	
 	unit_humidity_size=get_size(data,"unit=\"","humidity",temporary_data);
-	unit_humidity_value = (char *)malloc(unit_humidity_size+1);
+	unit_humidity_value = (char *)secure_malloc(unit_humidity_size+1);
 	get_value(unit_humidity_value,temporary_data,unit_humidity_size);
     
 	printf("humidity est %s %s",humidity_value,unit_humidity_value);
@@ -134,4 +135,16 @@ void free_dynamicVar(void *var){
 		free(var);
 		var=NULL;
 	}
+}
+
+void* secure_malloc(int size){
+ void* ptr =(void *) malloc(size);
+ int counter=0;
+	while((ptr==NULL) && (counter < MAX_Malloc_Tries ))
+	{
+		ptr = malloc(size);
+		counter++;
+	}
+ 
+ return ptr;
 }

@@ -3,6 +3,7 @@
 #define TOMTOM_H
 #define ASCII_Code_0 48
 #define townName_Size 20
+#define MAX_Malloc_Tries 1000
 #define default_townName "ABC" 
 #define default_queryValue "http://api.openweathermap.org/data/2.5/weather?q=ABC&mode=xml"
 #define ABOUT "About Embedded Weather Station \n\
@@ -26,6 +27,7 @@ void print_temp(char *data);
 void print_humidity(char *data);
 void printAbout();
 void free_dynamicVar(void *var);
+void* secure_malloc(int size);
 char *replace_str(const char *original_str, const char *old_str, const char *new_str);
 struct MemoryStruct {
   char *memory;

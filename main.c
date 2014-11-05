@@ -1,9 +1,9 @@
 #include <stdio.h>
-#include <conio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
 #include "tomtom.h"
+
 
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp);
 
@@ -14,11 +14,12 @@ int main(void)
   char townName[townName_Size];
   int choice=3;
   char *name_validity_pointer=NULL;
-  char *query_string=(char *)malloc(strlen(default_queryValue)+1);
-  char *oldTownName=(char *)malloc(strlen(default_townName)+1);
+  char *query_string=(char *)secure_malloc(strlen(default_queryValue)+1);
+  char *oldTownName=(char *)secure_malloc(strlen(default_townName)+1);
   struct MemoryStruct chunk;
   
   strcpy(query_string,default_queryValue);
+  
   strcpy(oldTownName,default_townName);
   ////////////////////////////////begin big while
           while(1)
@@ -45,7 +46,7 @@ int main(void)
 				 while(name_validity_pointer==NULL){
 								
 							  
-							  chunk.memory =(char*) malloc(1);  /* will be grown as needed by the realloc above */ 
+							  chunk.memory =(char*) secure_malloc(1);  /* will be grown as needed by the realloc above */ 
 							  chunk.size = 0;    /* no data at this point */ 
  							  curl_global_init(CURL_GLOBAL_ALL);
  							  /* init the curl session */ 
