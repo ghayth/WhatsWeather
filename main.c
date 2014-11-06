@@ -1,27 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
 #include <curl/curl.h>
-#include "tomtom.h"
+#include "utils.h"
+#include "stringsDef.h"
+#include "errorsConstants.h"
 
 
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp);
+struct MemoryStruct {
+  char *memory;
+  size_t size;
+};
 
 int main(void)
 {
   CURL *curl_handle;
   CURLcode res;
-  char townName[townName_Size];
-  int choice=3;
+  
+  char *townName=(char *) secure_malloc(1);
+  char *townName_auxiliarVar=(char *) secure_malloc(1);
+  char c=' ';
+  size_t townName_size=1;
+  //eMenuSelection choice = DEFAULT;
+  int choice=TOWN_NAME;
   char *name_validity_pointer=NULL;
   char *query_string=(char *)secure_malloc(strlen(default_queryValue)+1);
   char *oldTownName=(char *)secure_malloc(strlen(default_townName)+1);
   struct MemoryStruct chunk;
   
-  
+
   secure_strcpy(query_string,default_queryValue);
   secure_strcpy(oldTownName,default_townName);
-  ////////////////////////////////begin big while
+  ////////////////////////////////begin big while LOOP
           while(1)
         {
             
@@ -29,19 +41,19 @@ int main(void)
 			switch(choice)
             {
 
-            case choice_first:
+            case PRINT_TEMPERATURE:
                 system("cls");
                 print_temp(chunk.memory);
 				printf("\nPress anything to go back..");
-                getch();
+                _getch();
                 break;
-            case choice_2:
+            case PRINT_HUMIDITY:
                 system("cls");
                 print_humidity(chunk.memory);
                 printf("\nPress anything to back..");
-                getch();
+                _getch();
                 break;
-            case choice_3:
+            case TOWN_NAME:
                  name_validity_pointer= NULL;
 				 while(name_validity_pointer==NULL){
 								
@@ -52,8 +64,42 @@ int main(void)
  							  /* init the curl session */ 
 							  curl_handle = curl_easy_init();
 							  /* specify URL to get */ 
-							  printf("please enter townName:");
-							  scanf_s("%s",&townName,townName_Size);
+							  printf("\nplease enter townName:");
+							  
+							  if(townName)
+								  {
+									  free(townName);
+							          townName=NULL;
+							      }
+							  if(townName_auxiliarVar)
+								{
+									free(townName_auxiliarVar);
+									townName_auxiliarVar=NULL;
+								}
+							  
+							  townName_size=1;
+							  c=' ';
+							  townName=(char *) secure_malloc(1);
+							  townName_auxiliarVar=(char *) secure_malloc(1);
+							 
+							while(1)
+							  {
+								  c=_getch();
+								  if((int)c == ASCII_Code_ENTER)
+									  break;
+								  printf("%c",c);
+								  townName[townName_size-1]=c;
+								  townName[townName_size]='\0';
+								  townName_size++;
+								  strcpy(townName_auxiliarVar,townName);
+								  townName=(char *) realloc(townName,townName_size+1);
+								  strcpy(townName,townName_auxiliarVar);
+								  townName_auxiliarVar=(char *) realloc(townName_auxiliarVar,townName_size+1);
+
+							  }
+							 free_dynamicVar(townName_auxiliarVar);
+
+							  townName[townName_size]='\0';
 							  query_string=replace_str(query_string,oldTownName,townName);
 							  //strncpy_s(oldTownName,townName_Size,townName,sizeof(townName));
 							  secure_strcpy(oldTownName,townName);
@@ -95,22 +141,23 @@ int main(void)
 	
 
 					  }
-				 printf("The town name %s is accepted",townName);
-				 Sleep(1000);
+				 printf("\nThe town name %s is accepted",townName);
+				 Sleep(SECOND);
 					break;
-            case choice_4:
+            case ABOUT_APPLICATION:
                 system("cls");
                 printAbout();
 				printf("\nPress anything to back..");
-                getch();
+                _getch();
                 break;
-            case choice_last:
+            case EXIT:
                 printf("Please enter any key to exit the Weather Application..");
-				getch();
+				_getch();
                 break;
 
             }
-			if(choice==choice_last) break;
+			if(choice == EXIT) 
+				break;
 			system("cls");
             printf("Welcome to Embedded Weather Station !\n");
             printf("************The Menu ***************\n");
@@ -120,9 +167,10 @@ int main(void)
             printf("4) About the application\n");
             printf("5) exit the application\n");
             printf("\nPlease enter a valid choice: (between 1 and 5):");
-			choice=0;
-			choice=(int)getchar()-ASCII_Code_0;
-            while((choice<choice_first)||(choice>choice_last))
+
+			choice = DEFAULT;
+			choice = (int)_getch() - ASCII_Code_0;
+            while((choice < PRINT_TEMPERATURE) || (choice > EXIT))
             {
 				choice=(int)getchar()-ASCII_Code_0;
 				

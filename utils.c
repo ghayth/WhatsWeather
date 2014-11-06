@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <conio.h>
-#include "tomtom.h"
+#include "utils.h"
+#include "errorsConstants.h"
+#include "stringsDef.h"
 
 void printAbout(){
     printf("%s", ABOUT);
@@ -12,7 +13,8 @@ char *replace_str(const char *original_str, const char *old_str, const char *new
 {
 	char *result_str, *r;
 	const char *p, *q;
-	ptrdiff_t l;
+	
+	ptrdiff_t ptr_difference;
 	size_t count=0, result_len;
 	size_t old_strlen = strlen(old_str);
 	size_t new_strlen = strlen(new_str);
@@ -28,14 +30,14 @@ char *replace_str(const char *original_str, const char *old_str, const char *new
 	} else
 		result_len = strlen(original_str);
 
-	if ((result_str = (char *) secure_malloc(result_len + 1)) == NULL)
-		return NULL;
+	result_str = (char *) secure_malloc(result_len + 1) ;
+	
 	r = result_str;
 	for (p = original_str; (q = strstr(p, old_str)) != NULL; p = q + old_strlen) {
 		/* this is undefined if q - p > PTRDIFF_MAX */
-		l = q - p;
-		memcpy(r, p, l);
-		r += l;
+		ptr_difference = q - p;
+		memcpy(r, p, ptr_difference);
+		r += ptr_difference;
 		memcpy(r, new_str, new_strlen);
 		r += new_strlen;
 	}
@@ -80,8 +82,8 @@ int get_size(char *source_temporary_data,char *target_value_name,char *balise,ch
 		int whileCounter=0;
 		char *balise_value=strstr(source_temporary_data,balise);
 		char *parse_value=strstr(balise_value,target_value_name);
-	
-		while((parse_value[1]!='"')&&(whileCounter<strlen(parse_value)))
+		int length_parse_value=strlen(parse_value);
+		while((parse_value[1]!='"')&&(whileCounter < length_parse_value))
 		{
 			parse_value=(char *)parse_value + sizeof(char);
 			whileCounter++;
@@ -175,9 +177,9 @@ void free_dynamicVar(void *var){
 }
 
 void* secure_malloc(size_t size){
-	if(size<= 0)
+	if(size == 0)
 	{
-		printf("NEGATIVE size for Malloc");
+		printf("ZERO can't size for Malloc");
 		exit(Exit_secure_malloc);
 		return NULL;
 	}
@@ -197,16 +199,17 @@ void* secure_malloc(size_t size){
 
 void* secure_strcpy(char* firstStr,char* secondStr)
 {
-	if((firstStr == NULL)  || (secondStr == NULL))
+	if(firstStr && secondStr)
 	{
-		printf("secure_strcpy NULL value");
-		exit(Exit_secure_strcpy);
-		return NULL;
+		return strcpy(firstStr,secondStr);
 	}
 	
 	else
 	{
-		strcpy(firstStr,secondStr);
+		
+		return strcpy(firstStr,"");
+		
 	}
+
 
 }
