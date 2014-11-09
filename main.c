@@ -19,8 +19,8 @@ int main(void)
   CURL *curl_handle;
   CURLcode res;
   
-  char *townName=(char *) secure_malloc(1);
-  char c=' ';
+  char *townName = (char *) secure_malloc(1);
+  char readKeyBoard_char=' ';
   size_t townName_size=1;
   int choice=TOWN_NAME;
   char *name_validity_pointer=NULL;
@@ -72,16 +72,16 @@ int main(void)
 							      }
 							 							  
 							  townName_size=1;
-							  c=' ';
+							  readKeyBoard_char=' ';
 							  townName=(char *) secure_malloc(1);
 							  							 
 							while(1)
 							  {
-								  c=_getch();
-								  if((int)c == ASCII_Code_ENTER)
+								  readKeyBoard_char=_getch();
+								  if((int)readKeyBoard_char == ASCII_Code_ENTER)
 									  break;
-								  printf("%c",c);
-								  townName[townName_size-1]=c;
+								  printf("%c",readKeyBoard_char);
+								  townName[townName_size-1]=readKeyBoard_char;
 								  townName[townName_size]='\0';
 								  townName_size++;
 								  townName=(char *) realloc(townName,townName_size+1);
