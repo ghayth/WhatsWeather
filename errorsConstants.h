@@ -1,8 +1,6 @@
 #ifndef ERRORCODES_H
 #define ERRORCODES_H
 
-
-
 #define ASCII_Code_0 48
 #define ASCII_Code_ENTER 13
 #define MAX_Malloc_Tries 1000

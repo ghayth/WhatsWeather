@@ -20,19 +20,18 @@ int main(void)
   CURLcode res;
   
   char *townName=(char *) secure_malloc(1);
-  char *townName_auxiliarVar=(char *) secure_malloc(1);
   char c=' ';
   size_t townName_size=1;
-  //eMenuSelection choice = DEFAULT;
   int choice=TOWN_NAME;
   char *name_validity_pointer=NULL;
-  char *query_string=(char *)secure_malloc(strlen(default_queryValue)+1);
-  char *oldTownName=(char *)secure_malloc(strlen(default_townName)+1);
+  int query_strin_Size=strlen(initValue_queryValue)+1;
+  char *query_string=(char *)secure_malloc(query_strin_Size);
+  
   struct MemoryStruct chunk;
   
 
-  secure_strcpy(query_string,default_queryValue);
-  secure_strcpy(oldTownName,default_townName);
+  secure_strcpy(query_string,initValue_queryValue);
+  
   ////////////////////////////////begin big while LOOP
           while(1)
         {
@@ -71,17 +70,11 @@ int main(void)
 									  free(townName);
 							          townName=NULL;
 							      }
-							  if(townName_auxiliarVar)
-								{
-									free(townName_auxiliarVar);
-									townName_auxiliarVar=NULL;
-								}
-							  
+							 							  
 							  townName_size=1;
 							  c=' ';
 							  townName=(char *) secure_malloc(1);
-							  townName_auxiliarVar=(char *) secure_malloc(1);
-							 
+							  							 
 							while(1)
 							  {
 								  c=_getch();
@@ -91,18 +84,18 @@ int main(void)
 								  townName[townName_size-1]=c;
 								  townName[townName_size]='\0';
 								  townName_size++;
-								  strcpy(townName_auxiliarVar,townName);
 								  townName=(char *) realloc(townName,townName_size+1);
-								  strcpy(townName,townName_auxiliarVar);
-								  townName_auxiliarVar=(char *) realloc(townName_auxiliarVar,townName_size+1);
 
 							  }
-							 free_dynamicVar(townName_auxiliarVar);
-
 							  townName[townName_size]='\0';
-							  query_string=replace_str(query_string,oldTownName,townName);
-							  //strncpy_s(oldTownName,townName_Size,townName,sizeof(townName));
-							  secure_strcpy(oldTownName,townName);
+
+							  secure_strcpy(query_string,initValue_queryValue);
+							  query_strin_Size = strlen(initValue_queryValue)+townName_size+strlen(lastPart_queryValue)+1;
+							  query_string=(char *) realloc(query_string,query_strin_Size);
+							  strcat(query_string,townName);
+							  strcat(query_string,lastPart_queryValue);
+							  query_string[query_strin_Size]='\0';
+							  
 							  curl_easy_setopt(curl_handle, CURLOPT_URL, query_string);
 							  /* send all data to this function  */ 
 							  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
@@ -181,6 +174,7 @@ int main(void)
 	 /* cleanup curl stuff */ 
   curl_easy_cleanup(curl_handle);
   free_dynamicVar(chunk.memory);
+  free_dynamicVar(query_string);
   /* we're done with libcurl, so clean it up */ 
   curl_global_cleanup();
 

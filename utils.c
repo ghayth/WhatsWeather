@@ -9,44 +9,6 @@ void printAbout(){
     printf("%s", ABOUT);
 }
 
-char *replace_str(const char *original_str, const char *old_str, const char *new_str)
-{
-	char *result_str, *r;
-	const char *p, *q;
-	
-	ptrdiff_t ptr_difference;
-	size_t count=0, result_len;
-	size_t old_strlen = strlen(old_str);
-	size_t new_strlen = strlen(new_str);
-
-	if (old_strlen != new_strlen) {
-		for (p = original_str; (q = strstr(p, old_str)) != NULL; p = q + old_strlen)
-		{
-			count++;
-		}
-		/* this is undefined if p - str > PTRDIFF_MAX */
-		result_len = strlen(original_str) + count * (new_strlen - old_strlen);
-		
-	} else
-		result_len = strlen(original_str);
-
-	result_str = (char *) secure_malloc(result_len + 1) ;
-	
-	r = result_str;
-	for (p = original_str; (q = strstr(p, old_str)) != NULL; p = q + old_strlen) {
-		/* this is undefined if q - p > PTRDIFF_MAX */
-		ptr_difference = q - p;
-		memcpy(r, p, ptr_difference);
-		r += ptr_difference;
-		memcpy(r, new_str, new_strlen);
-		r += new_strlen;
-	}
-	
-	strcpy(r, p);
-	
-	return result_str;
-}
-
 char *get_value(char *target_value,char *parse_value,int value_size)
 {	
 	if((target_value == NULL)||(parse_value ==  NULL) ||(value_size <= 0) )

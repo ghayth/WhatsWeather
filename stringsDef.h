@@ -1,8 +1,8 @@
 #ifndef STRINGSDEF_H
 #define STRINGSDEF_H
 
-#define default_townName "ABC" 
-#define default_queryValue "http://api.openweathermap.org/data/2.5/weather?q=ABC&mode=xml"
+#define initValue_queryValue "http://api.openweathermap.org/data/2.5/weather?q="
+#define	lastPart_queryValue "&mode=xml"
 #define ABOUT "About Embedded Weather Station \n\
 It's an embedded application that consist of getting the weather's data through a web service.n\
 I divided the application to 3 parts essentially: \n\
