@@ -92,8 +92,9 @@ int main(void)
 							  secure_strcpy(query_string,initValue_queryValue);
 							  query_strin_Size = strlen(initValue_queryValue)+townName_size+strlen(lastPart_queryValue)+1;
 							  query_string=(char *) realloc(query_string,query_strin_Size);
-							  strcat(query_string,townName);
-							  strcat(query_string,lastPart_queryValue);
+							  
+							  strcat_s(query_string,townName_size,townName);
+							  strcat_s(query_string,strlen(lastPart_queryValue),lastPart_queryValue);
 							  query_string[query_strin_Size]='\0';
 							  
 							  curl_easy_setopt(curl_handle, CURLOPT_URL, query_string);
